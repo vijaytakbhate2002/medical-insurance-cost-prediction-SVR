@@ -9,4 +9,4 @@ CAT_COLS = ['sex', 'smoker', 'region']
 NUM_COLS = ['age', 'bmi', 'children']
 TARGET_COLS = ['charges']
 
-BEST_PARAMS = {}
+BEST_PARAMS = {'C': 10, 'epsilon': 0.01, 'gamma': 'auto', 'kernel': 'rbf'}
