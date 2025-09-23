@@ -34,7 +34,7 @@ column_transformer = ColumnTransformer(
 )
 
 
-pipeline = Pipeline(steps=[
+processing_pipe = Pipeline(steps=[
     ('processor', column_transformer)
 ])
 

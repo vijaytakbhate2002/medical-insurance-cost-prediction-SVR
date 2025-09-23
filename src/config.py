@@ -8,3 +8,5 @@ CWD = os.getcwd()
 CAT_COLS = ['sex', 'smoker', 'region']
 NUM_COLS = ['age', 'bmi', 'children']
 TARGET_COLS = ['charges']
+
+BEST_PARAMS = {}
