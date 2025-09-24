@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from src.data_handling import dataDumper, dataLoader
 from src.training_pipeline import training_pipe
@@ -9,6 +10,18 @@ from src.grid_search import grid_search
 from src import config
 from src.model_validation import ModelValidation
 from processing_pipeline_runner import process_data
+import logging
+
+logging.basicConfig(
+    filename='logs.log',
+    filemode='a',
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    level=logging.DEBUG
+)
+
+
+logging.info("Logging is started ...")
+
 
 def train_model(activate_grid_search:bool=True) -> Pipeline:
 
@@ -24,10 +37,15 @@ def train_model(activate_grid_search:bool=True) -> Pipeline:
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     if activate_grid_search:
+        logging.info("Searching for best parameteres ...")
         grid_search.fit(X, y)
         config.BEST_PARAMS = grid_search.best_params_
+        logging.info("Found best parameters are ", config.BEST_PARAMS)
 
+    logging.info("Fitting training pipeline ...")
     training_pipe.fit(X_train, y_train)
+
+    logging.info("Creating Instance of model validation ...")
     model_validation = ModelValidation(
                                         model=training_pipe,
                                         X_train=X_train,
@@ -35,16 +53,17 @@ def train_model(activate_grid_search:bool=True) -> Pipeline:
                                         y_train=y_train,
                                         y_test=y_test
                                        )
-    
+
+    logging.info("Calling metrics function of model validation instance ...")
     validation_dict = model_validation.metrics()
 
-    print(training_pipe, validation_dict)
+    logging.info(f"Returning training pipe and validation dictionary {validation_dict} ...")
     return training_pipe, validation_dict
 
 
 
 
 if __name__ == "__main__":
-    train_model()
+    train_model(activate_grid_search=False)
 
 

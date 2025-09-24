@@ -3,13 +3,16 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from src.data_handling import dataDumper, dataLoader
 from src.data_processing import processing_pipe
 from src.config import CAT_COLS, NUM_COLS, TARGET_COLS, RAW_DATA_PATH, PROCESSED_X_PATH, PROCESSED_Y_PATH
+import logging
 
 
 def process_data() -> tuple:
+
+    logging.info("Data processing started ...")
     df = dataLoader(path=RAW_DATA_PATH)
 
     X = processing_pipe.fit_transform(df.drop(TARGET_COLS, axis='columns'), df[TARGET_COLS])
-    processed_cols = NUM_COLS + CAT_COLS 
+    processed_cols = CAT_COLS + NUM_COLS 
     X = pd.DataFrame(X, columns=processed_cols)
 
 
