@@ -25,4 +25,4 @@ jobs:
         pip install -r requirements.txt
     - name: Test pipeline
       run: |
-        pytest test_code/test_pipelines.py
+        PYTHONPATH=(pwd) pytest -v test_code/test_pipelines.py 
