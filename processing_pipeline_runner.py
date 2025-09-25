@@ -6,10 +6,13 @@ from src.config import CAT_COLS, NUM_COLS, TARGET_COLS, RAW_DATA_PATH, PROCESSED
 import logging
 
 
-def process_data() -> tuple:
+def process_data(df:pd.DataFrame=None) -> tuple:
 
-    logging.info("Data processing started ...")
-    df = dataLoader(path=RAW_DATA_PATH)
+    if isinstance(df, pd.DataFrame):
+        pass
+    else:
+        logging.info("Data processing started ...")
+        df = dataLoader(path=RAW_DATA_PATH)
 
     X = processing_pipe.fit_transform(df.drop(TARGET_COLS, axis='columns'), df[TARGET_COLS])
     processed_cols = CAT_COLS + NUM_COLS 

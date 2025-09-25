@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 from sklearn.pipeline import Pipeline
 
-
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SRC_PATH = os.path.join(PROJECT_ROOT, "src")
 sys.path.append(SRC_PATH)
@@ -18,17 +17,18 @@ import training_pipeline_runner
 import processing_pipeline_runner
 import config
 
+df = pd.read_csv("test_code\\raw_data\\insurance.csv")
 
 def test_processing_pipeline():
-    X, y = processing_pipeline_runner.process_data()
-    assert X is not None
-    assert y is not None
+    X, y = processing_pipeline_runner.process_data(df=df)
+    assert isinstance(X, pd.DataFrame)
+    assert isinstance(y, pd.Series)
 
     
 def test_training_pipeline():
-    X, y = processing_pipeline_runner.process_data()
-    assert X is not None
-    assert y is not None
+    X, y = processing_pipeline_runner.process_data(df=df)
+    assert isinstance(X, pd.DataFrame)
+    assert isinstance(y, pd.Series)
 
     training_pipe, validation_dict = training_pipeline_runner.train_model(activate_grid_search=True)
     assert isinstance(training_pipe, Pipeline)
