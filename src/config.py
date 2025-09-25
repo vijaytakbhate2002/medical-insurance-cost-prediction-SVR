@@ -4,9 +4,9 @@ import os
 WORKDIR_PATH = ""
 
 
-RAW_DATA_PATH = "data\\raw_data\\insurance.csv"
-PROCESSED_X_PATH = "data\\processed_data\\processed_X.csv"
-PROCESSED_Y_PATH = "data\\processed_data\\processed_Y.csv"
+RAW_DATA_PATH = "data/raw_data/insurance.csv"
+PROCESSED_X_PATH = "data/processed_data/processed_X.csv"
+PROCESSED_Y_PATH = "data/processed_data/processed_Y.csv"
 CWD = os.getcwd()
 
 
