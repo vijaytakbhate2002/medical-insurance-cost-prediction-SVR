@@ -17,7 +17,12 @@ import training_pipeline_runner
 import processing_pipeline_runner
 import config
 
-df = pd.read_csv("test_code\\raw_data\\insurance.csv")
+
+if os.path.exists("raw_data\\insurance.csv"):
+    df = pd.read_csv("raw_data\\insurance.csv")
+else:
+    df = pd.read_csv("test_code\\raw_data\\insurance.csv")
+
 
 def test_processing_pipeline():
     X, y = processing_pipeline_runner.process_data(df=df)
