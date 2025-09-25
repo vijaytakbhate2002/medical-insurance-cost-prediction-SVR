@@ -25,4 +25,4 @@ jobs:
         pip install -r requirements.txt
     - name: Test pipeline
       run: |
-        python test_code/test_pipelines.py
+        pytest test_code/test_pipelines.py
