@@ -3,7 +3,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from .config import CAT_COLS, NUM_COLS, TARGET_COLS
+from config import CAT_COLS, NUM_COLS, TARGET_COLS
 
 
 
