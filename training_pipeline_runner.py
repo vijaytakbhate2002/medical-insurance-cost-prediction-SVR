@@ -64,6 +64,6 @@ def train_model(activate_grid_search:bool=True) -> Pipeline:
 
 
 if __name__ == "__main__":
-    train_model(activate_grid_search=True)
+    train_model(activate_grid_search=False)
 
 

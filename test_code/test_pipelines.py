@@ -19,11 +19,13 @@ import processing_pipeline_runner
 import config
 
 
-df = pd.read_csv("data/raw_data/insurance.csv")
+def test_processing_pipeline():
+    X, y = processing_pipeline_runner.process_data()
+    assert X is not None
+    assert y is not None
 
-
-@pytest.mark.parametrize("row", df.to_dict(orient="records")[:5]) 
-def test_training_pipeline(row):
+    
+def test_training_pipeline():
     X, y = processing_pipeline_runner.process_data()
     assert X is not None
     assert y is not None
