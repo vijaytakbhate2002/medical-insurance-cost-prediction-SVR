@@ -18,10 +18,8 @@ import processing_pipeline_runner
 import config
 
 
-if os.path.exists("raw_data\\insurance.csv"):
-    df = pd.read_csv("raw_data\\insurance.csv")
-else:
-    df = pd.read_csv("test_code\\raw_data\\insurance.csv")
+df_path = os.path.join("test_code", "raw_data", "insurance.csv")
+df = pd.read_csv(df_path)
 
 
 def test_processing_pipeline():
