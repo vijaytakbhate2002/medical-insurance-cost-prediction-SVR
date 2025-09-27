@@ -7,7 +7,17 @@ import logging
 
 
 def process_data(df:pd.DataFrame=None) -> tuple:
+    """
+        Args: 
+            df:pd.DataFrame (pandas dataframe, if not passed function will try to load data from specified path)
+        
+        Return:
+            X, y : tuple (return pd.DataFrame, pd.Series)
 
+        Description: function will read data from source or take it if passed, 
+                    then apply processing pipeline and return processed data
+
+    """
     if isinstance(df, pd.DataFrame):
         pass
     else:

@@ -16,9 +16,8 @@ NUM_COLS = ['age', 'bmi', 'children']
 TARGET_COLS = ['charges']
 
 
-
 BEST_PARAMS = {'C': 10, 'epsilon': 0.01, 'gamma': 'auto', 'kernel': 'rbf'}
 
-MLFLOW_URI = "http://ec2-54-204-194-73.compute-1.amazonaws.com:5000/"
+MLFLOW_URI = "http://ec2-54-224-80-234.compute-1.amazonaws.com:5000"
 
 

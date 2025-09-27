@@ -6,18 +6,20 @@ from sklearn.pipeline import Pipeline
 from .config import CAT_COLS, NUM_COLS, TARGET_COLS
 
 
-
 class LabelEncoding(BaseEstimator, TransformerMixin):
+    """Fit and transform label encoder to all the columns"""
     def __init__(self):
         self.encoders = {}
 
     def fit(self, X, y=None):
+        """ Creates the encoder for label encoding"""
         self.encoders = {
             col: LabelEncoder().fit(X[col]) for col in X.columns
         }
         return self
 
     def transform(self, X, y=None):
+        """ transform categorical columns and return transformed data"""
         X_copy = X.copy()
         for col, encoder in self.encoders.items():
             X_copy[col] = encoder.transform(X_copy[col])

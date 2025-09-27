@@ -23,13 +23,15 @@ logging.basicConfig(
 logging.info("Logging is started ...")
 
 
-def train_model(activate_grid_search:bool=True) -> Pipeline:
+def train_model(activate_grid_search:bool=True, return_data:bool=False) -> Pipeline:
 
     """ 
-        Args: activate_grid_search: bool
-        Description: This function will train pipeline, generate validation metrics.
+        Args: 
+            activate_grid_search: bool (if true, it will find best parameters using grid search)
+            return_data: bool
         Return: tuple(sklearn.pipeline.Pipeline, dict)
                 function will return trained pipeline and dictionary with metrics
+        Description: This function will train pipeline, generate validation metrics.
         """
 
     X, y = process_data()
@@ -57,6 +59,9 @@ def train_model(activate_grid_search:bool=True) -> Pipeline:
     logging.info("Calling metrics function of model validation instance ...")
     validation_dict = model_validation.metrics()
 
+    if return_data:
+        logging.info(f"Returning training pipe and validation dictionary {validation_dict} with splitted data ...")
+        return training_pipe, validation_dict, X_train, X_test, y_train, y_test
     logging.info(f"Returning training pipe and validation dictionary {validation_dict} ...")
     return training_pipe, validation_dict
 
