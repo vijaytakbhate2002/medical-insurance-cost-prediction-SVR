@@ -6,11 +6,14 @@ from src.training_pipeline import training_pipe
 from src.config import CAT_COLS, NUM_COLS, TARGET_COLS, RAW_DATA_PATH, PROCESSED_X_PATH, PROCESSED_Y_PATH
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from src.grid_search import grid_search
+from src.grid_search import grid_search, gridSearch
 from src import config
 from src.model_validation import ModelValidation
 from processing_pipeline_runner import process_data
 import logging
+import json
+import joblib
+
 
 logging.basicConfig(
     filename='logs.log',
@@ -34,19 +37,41 @@ def train_model(activate_grid_search:bool=True, return_data:bool=False) -> Pipel
         Description: This function will train pipeline, generate validation metrics.
         """
 
-    X, y = process_data()
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    logging.info("Splitting raw data to fit ...")
+    df = dataLoader(path=RAW_DATA_PATH)
+    raw_X, raw_y = df.drop(TARGET_COLS, axis='columns'), df[TARGET_COLS]
+
+
+    logging.info("Scaling target column with minmax")
+    target_scaling = MinMaxScaler()
+    y_scaled = target_scaling.fit_transform(raw_y.values.reshape(-1, 1))
+    joblib.dump(target_scaling, "data/target_scaling.pkl")
+
+
+    y_scaled = y_scaled.ravel()
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        raw_X, y_scaled, test_size=0.2, random_state=42
+    )
+    
 
     if activate_grid_search:
-        logging.info("Searching for best parameteres ...")
-        grid_search.fit(X, y)
-        config.BEST_PARAMS = grid_search.best_params_
-        logging.info("Found best parameters are ", config.BEST_PARAMS)
+        logging.info("Searching best parameters with grid search CV...")
+        grid_search = gridSearch(training_pipe)
+        grid_search.fit(raw_X, y_scaled)
 
-    logging.info("Fitting training pipeline ...")
+        logging.info("Loading best parameteres to src/params.json")
+        with open("src/params.json", "w") as file:
+            json.dump(grid_search.best_params_, file, indent=4)
+
+        logging.info(f"Found best parameters are {grid_search.best_params_}")
+
+    
+    logging.info("Fitting raw datat to training pipeline ...")
     training_pipe.fit(X_train, y_train)
 
+    
     logging.info("Creating Instance of model validation ...")
     model_validation = ModelValidation(
                                         model=training_pipe,
@@ -56,19 +81,23 @@ def train_model(activate_grid_search:bool=True, return_data:bool=False) -> Pipel
                                         y_test=y_test
                                        )
 
+
     logging.info("Calling metrics function of model validation instance ...")
     validation_dict = model_validation.metrics()
 
+    
     if return_data:
+        training_pipe.fit(raw_X, y_scaled)
         logging.info(f"Returning training pipe and validation dictionary {validation_dict} with splitted data ...")
         return training_pipe, validation_dict, X_train, X_test, y_train, y_test
+
+    
+    training_pipe.fit(raw_X, y_scaled)
     logging.info(f"Returning training pipe and validation dictionary {validation_dict} ...")
     return training_pipe, validation_dict
 
 
-
-
 if __name__ == "__main__":
-    train_model(activate_grid_search=False)
+    train_model(activate_grid_search=True)
 
 

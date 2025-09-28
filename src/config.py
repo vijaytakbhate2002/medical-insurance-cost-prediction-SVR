@@ -14,10 +14,11 @@ CWD = os.getcwd()
 CAT_COLS = ['sex', 'smoker', 'region']
 NUM_COLS = ['age', 'bmi', 'children']
 TARGET_COLS = ['charges']
+TARGET_SCALER_PATH = "data/target_scaling.pkl"
 
+MLFLOW_URI = "http://ec2-52-90-255-217.compute-1.amazonaws.com:5000/"
 
-BEST_PARAMS = {'C': 10, 'epsilon': 0.01, 'gamma': 'auto', 'kernel': 'rbf'}
+BEST_MODEL_FOLDER = "best_performing_model/"
 
-MLFLOW_URI = "http://ec2-54-224-80-234.compute-1.amazonaws.com:5000"
 
 

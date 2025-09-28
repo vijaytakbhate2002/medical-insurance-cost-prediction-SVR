@@ -35,6 +35,7 @@ class ModelValidation:
                      )
         
         y_pred = self.model.predict(self.X_test)
+        logging.info(f"Example y_test: {self.y_test[:5]}, Example y_pred: {y_pred[:5]}")
         y_train_pred = self.model.predict(self.X_train)
 
         train_r2 = r2_score(self.y_train, y_train_pred)

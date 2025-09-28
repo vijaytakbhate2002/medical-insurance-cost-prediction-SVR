@@ -1,0 +1,6 @@
+{
+    "SVR__C": 10,
+    "SVR__epsilon": 0.01,
+    "SVR__gamma": "auto",
+    "SVR__kernel": "rbf"
+}
