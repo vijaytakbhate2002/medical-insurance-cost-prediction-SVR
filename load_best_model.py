@@ -6,7 +6,6 @@ import mlflow.pyfunc
 import os
 import joblib
 from src.config import BEST_MODEL_FOLDER
-import src.credentials
 
 
 # os.environ['MLFLOW_TRACKING_USERNAME'] = 'YOUR USERNAME'

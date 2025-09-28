@@ -9,7 +9,6 @@ from urllib import parse
 import logging
 import boto3
 import json
-import src.credentials
 
 
 with open("src/params.json", 'r') as file:
