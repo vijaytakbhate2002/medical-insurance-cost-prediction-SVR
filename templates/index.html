@@ -1,0 +1,260 @@
+<!--
+  Frontend for "medical-insurance-cost-prediction-SVR"
+  - Save this file as templates/index.html in your Flask project
+  - Static CSS (embedded here) can be moved to static/css/style.css if you prefer
+  - JavaScript sends POST /predict with JSON body {age,sex,bmi,children,smoker,region}
+  - Expects JSON response: { prediction: <number> }
+  - Model path (Flask backend): best_performing_model/InsuranceCostPredictor_13.pkl
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Medical Insurance Cost Prediction (SVR)</title>
+  <style>
+    :root{
+      --accent:#0b84ff;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --bg:#f6f8fb;
+      --github:#24292f;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,'Helvetica Neue',Arial;background:var(--bg);color:#0f172a}
+    .container{max-width:1100px;margin:36px auto;padding:24px}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#6dd5ed);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:0;color:var(--muted)}
+
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:20px}
+    .card{background:var(--card);border-radius:14px;padding:18px;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+
+    form .row{display:flex;gap:12px;margin-bottom:12px}
+    label{font-size:13px;color:#102a43}
+    input[type=number],select{width:100%;padding:8px 10px;border-radius:8px;border:1px solid #e6edf3;font-size:14px}
+    .two{flex:1}
+    .submit-row{display:flex;gap:12px;align-items:center;margin-top:8px}
+    button{background:var(--accent);color:white;border:none;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+    button[disabled]{opacity:0.6;cursor:not-allowed}
+
+    .result{font-size:18px;font-weight:700}
+    .muted{color:var(--muted);font-size:13px}
+
+    .profiles{display:flex;flex-direction:column;gap:10px}
+    .profile-link{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;text-decoration:none;color:inherit}
+    .github{background:linear-gradient(90deg,#fff,#f3f6fa);border-left:4px solid #24292f;box-shadow:0 6px 18px rgba(36,41,47,0.06)}
+    .github strong{color:var(--github)}
+    .kaggle{border-left:4px solid #20beff}
+    .linkedin{border-left:4px solid #0a66c2}
+
+    .sample{margin-top:12px;font-size:13px;color:var(--muted)}
+    pre.sample-csv{background:#0b1220;color:#dbeafe;padding:12px;border-radius:10px;overflow:auto}
+
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+
+    @media(max-width:880px){.grid{grid-template-columns:1fr;}.header{flex-direction:column;align-items:flex-start}.brand{gap:10px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">SVR</div>
+        <div>
+          <h1>Medical Insurance Cost Prediction — SVR</h1>
+          <p class="lead">Model: <code>InsuranceCostPredictor_13.pkl</code> · Input: age, sex, bmi, children, smoker, region</p>
+        </div>
+      </div>
+      <div class="muted">Project: <strong>medical-insurance-cost-prediction-SVR</strong></div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h3>Predict insurance charges</h3>
+          <p class="muted">Enter the input features and click <strong>Predict</strong>.</p>
+
+          <form id="predictForm">
+            <div class="row">
+              <div class="two">
+                <label for="age">Age</label>
+                <input id="age" name="age" type="number" min="0" step="1" value="30" required>
+              </div>
+              <div class="two">
+                <label for="sex">Sex</label>
+                <select id="sex" name="sex" required>
+                  <option value="male">male</option>
+                  <option value="female">female</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="two">
+                <label for="bmi">BMI</label>
+                <input id="bmi" name="bmi" type="number" min="0" step="0.01" value="25.0" required>
+              </div>
+              <div class="two">
+                <label for="children">Children</label>
+                <input id="children" name="children" type="number" min="0" step="1" value="0" required>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="two">
+                <label for="smoker">Smoker</label>
+                <select id="smoker" name="smoker" required>
+                  <option value="no">no</option>
+                  <option value="yes">yes</option>
+                </select>
+              </div>
+              <div class="two">
+                <label for="region">Region</label>
+                <select id="region" name="region" required>
+                  <option value="southeast">southeast</option>
+                  <option value="southwest">southwest</option>
+                  <option value="northeast">northeast</option>
+                  <option value="northwest">northwest</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="submit-row">
+              <button id="predictBtn" type="submit">Predict</button>
+              <div id="status" class="muted">Ready</div>
+            </div>
+          </form>
+
+          <hr style="margin:16px 0">
+          <div>
+            <div class="muted">Prediction</div>
+            <div id="result" class="result">—</div>
+            <div id="explain" class="muted" style="margin-top:6px"></div>
+          </div>
+
+          <div class="sample">
+            <div style="margin-top:12px;font-weight:600">Sample CSV rows</div>
+            <pre class="sample-csv">age,sex,bmi,children,smoker,region,charges
+19,female,27.9,0,yes,southwest,16884.924
+18,male,33.77,1,no,southeast,1725.5523
+28,male,33,3,no,southeast,4449.462
+33,male,22.705,0,no,northwest,21984.47</pre>
+            <div style="margin-top:10px"><a id="downloadCsv" href="#">Download sample CSV</a></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <h3>Notes</h3>
+          <ul style="margin:8px 0 0 18px;color:var(--muted)">
+            <li>Flask endpoint <code>POST /predict</code> should accept JSON and return JSON {"prediction": number}.</li>
+            <li>Ensure your backend converts categorical features to the same encoding used during training (sex, smoker, region).</li>
+            <li>Model file path: <code>best_performing_model/InsuranceCostPredictor_13.pkl</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <h4>Profiles</h4>
+          <div class="profiles" style="margin-top:10px">
+            <a class="profile-link github" href="https://github.com/vijaytakbhate2002" target="_blank" rel="noopener noreferrer"><span>🐙</span><div><strong>GitHub — vijaytakbhate2002</strong><div class="muted">(highlighted)</div></div></a>
+            <a class="profile-link linkedin" href="https://www.linkedin.com/in/vijay-takbhate-b9231a236/" target="_blank" rel="noopener noreferrer"><span>🔗</span><div>LinkedIn<br><span class="muted">Vijay Takbhate</span></div></a>
+            <a class="profile-link kaggle" href="https://www.kaggle.com/vijay20213" target="_blank" rel="noopener noreferrer"><span>📊</span><div>Kaggle<br><span class="muted">vijay20213</span></div></a>
+          </div>
+
+          <div style="margin-top:14px" class="muted">Project link</div>
+          <a class="muted" href="https://github.com/vijaytakbhate2002/medical-insurance-cost-prediction-SVR.git" target="_blank" rel="noopener noreferrer">github.com/vijaytakbhate2002/medical-insurance-cost-prediction-SVR</a>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h4>Quick actions</h4>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="resetBtn" style="flex:1;background:#e6eefc;color:var(--accent);border:1px solid #d0e7ff">Reset</button>
+            <button id="exampleBtn" style="flex:1;background:#f6f6f8;color:#334155;border:1px solid #e6e9ee">Use example</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>Built by <strong>Vijay Dipak Takbhate</strong> — <span class="muted">Model served by Flask</span></footer>
+  </div>
+
+  <script>
+    // helper: format currency-ish
+    function fmt(x){
+      if(x===null||x===undefined) return '—';
+      return (Number(x)).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    const form = document.getElementById('predictForm');
+    const result = document.getElementById('result');
+    const status = document.getElementById('status');
+    const explain = document.getElementById('explain');
+    const predictBtn = document.getElementById('predictBtn');
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      predictBtn.disabled = true;
+      status.textContent = 'Sending...';
+
+      const payload = {
+        age: Number(document.getElementById('age').value),
+        sex: document.getElementById('sex').value,
+        bmi: Number(document.getElementById('bmi').value),
+        children: Number(document.getElementById('children').value),
+        smoker: document.getElementById('smoker').value,
+        region: document.getElementById('region').value
+      };
+
+      try{
+        const resp = await fetch('/predict',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify(payload)
+        });
+        if(!resp.ok) throw new Error('Server returned ' + resp.status);
+        const data = await resp.json();
+        if(data.prediction===undefined) throw new Error('Invalid response');
+        result.textContent = '₹ ' + fmt(data.prediction);
+        explain.textContent = 'Model output (charges).';
+        status.textContent = 'Success';
+      }catch(err){
+        console.error(err);
+        result.textContent = 'Error — see console';
+        explain.textContent = err.message;
+        status.textContent = 'Failed';
+      } finally{
+        predictBtn.disabled = false;
+      }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click',()=>{
+      form.reset();
+      result.textContent='—';
+      explain.textContent='';
+    });
+
+    document.getElementById('exampleBtn').addEventListener('click',()=>{
+      document.getElementById('age').value = 19;
+      document.getElementById('sex').value = 'female';
+      document.getElementById('bmi').value = 27.9;
+      document.getElementById('children').value = 0;
+      document.getElementById('smoker').value = 'yes';
+      document.getElementById('region').value = 'southwest';
+    });
+
+    // sample CSV download
+    document.getElementById('downloadCsv').addEventListener('click', (e)=>{
+      e.preventDefault();
+      const csv = 'age,sex,bmi,children,smoker,region,charges\n19,female,27.9,0,yes,southwest,16884.924\n18,male,33.77,1,no,southeast,1725.5523\n28,male,33,3,no,southeast,4449.462\n33,male,22.705,0,no,northwest,21984.47\n';
+      const blob = new Blob([csv],{type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'sample_insurance_rows.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

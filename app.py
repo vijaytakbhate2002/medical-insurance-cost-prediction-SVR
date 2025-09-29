@@ -1,18 +1,52 @@
+from flask import Flask, request, jsonify, render_template
 import joblib
-from src import config
+import numpy as np
+import logging
 import pandas as pd
-from src.config import TARGET_COLS, TARGET_SCALER_PATH
 
-target_scaler = joblib.load(TARGET_SCALER_PATH)
-model = joblib.load("best_performing_model\InsuranceCostPredictor_13.pkl")
+app = Flask(__name__)
 
-df = pd.read_csv(config.RAW_DATA_PATH)
-X = df.drop(TARGET_COLS, axis='columns')
-y = df[TARGET_COLS]
-
-y_pred = model.predict(X)
-
-y_pred_org = target_scaler.inverse_transform(y_pred.reshape(1, -1))
-print(y_pred_org[:10], y[:10])
+model = joblib.load("best_performing_model/InsuranceCostPredictor_13.pkl")
+scaler = joblib.load("data/target_scaling.pkl")
 
 
+@app.route("/")
+def index():
+    return render_template("index.html")  
+
+
+@app.route("/predict", methods=["POST"])
+def predict():
+    try:
+        data = request.get_json() 
+
+        age = int(data.get("age", 0))
+        sex = data.get("sex", "male").lower()
+        bmi = float(data.get("bmi", 0))
+
+        children = int(data.get("children", 0))
+        smoker = data.get("smoker", "no").lower()
+        region = data.get("region", "southwest").lower()
+        
+        input_data = pd.DataFrame([{
+            "age": age,
+            "sex": sex,
+            "bmi": bmi,
+            "children": children,
+            "smoker": smoker,
+            "region": region
+        }])
+
+        prediction = model.predict(input_data)
+        print("before:", prediction)
+        prediction = scaler.inverse_transform(prediction.reshape(-1, 1))
+        print("after:", prediction)
+
+        return jsonify({"prediction": float(prediction)})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)

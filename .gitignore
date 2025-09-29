@@ -2,3 +2,4 @@ logs.log
 temp
 dev_env
 credentials.py
+env
