@@ -26,7 +26,7 @@ def predict():
 
         children = int(data.get("children", 0))
         smoker = data.get("smoker", "no").lower()
-        region = data.get("region", "southwest").lower()
+        region = data.get("(US) region", "southwest").lower()
         
         input_data = pd.DataFrame([{
             "age": age,
