@@ -1,0 +1,92 @@
+# PIPELINE DEFINITION
+# Name: medical-insurance-cost-prediction-app
+# Description: This pipeline will process the data and train the model
+components:
+  comp-data-processing-op:
+    executorLabel: exec-data-processing-op
+  comp-model-training-op:
+    executorLabel: exec-model-training-op
+deploymentSpec:
+  executors:
+    exec-data-processing-op:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - data_processing_op
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.14.4'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
+          $0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef data_processing_op():\n    import subprocess\n    subprocess.run([\"\
+          python\", \"processing_pipeline_runner.py\"], check=True)\n\n"
+        image: vijaytakbhate1/medical_insurance_cost_prediction_svr:latest
+    exec-model-training-op:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - model_training_op
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.14.4'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"' && \"\
+          $0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef model_training_op():\n    import subprocess\n    subprocess.run([\"\
+          python\", \"training_pipeline_runner.py\"], check=True)\n\n"
+        image: vijaytakbhate1/medical_insurance_cost_prediction_svr:latest
+pipelineInfo:
+  description: This pipeline will process the data and train the model
+  name: medical-insurance-cost-prediction-app
+root:
+  dag:
+    tasks:
+      data-processing-op:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-data-processing-op
+        taskInfo:
+          name: data-processing-op
+      model-training-op:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-model-training-op
+        dependentTasks:
+        - data-processing-op
+        taskInfo:
+          name: model-training-op
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.14.4

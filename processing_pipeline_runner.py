@@ -5,6 +5,13 @@ from src.data_processing import processing_pipe
 from src.config import CAT_COLS, NUM_COLS, TARGET_COLS, RAW_DATA_PATH, PROCESSED_X_PATH, PROCESSED_Y_PATH
 import logging
 
+logging.basicConfig(
+    filename='logs.log',
+    filemode='a',
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    level=logging.DEBUG
+)
+
  
 def process_data(df:pd.DataFrame=None) -> tuple:
     """
@@ -36,7 +43,9 @@ def process_data(df:pd.DataFrame=None) -> tuple:
 
     dataDumper(X, PROCESSED_X_PATH)
     dataDumper(y, path=PROCESSED_Y_PATH)
+    logging.info("Data Loaded successfully ...")
 
     return X, y
 
-
+if __name__ == "__main__":
+    process_data()
