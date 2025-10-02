@@ -105,13 +105,13 @@ medical-insurance-cost-prediction-SVR/
 ✅ Built a **Flask web application** with an interactive UI for **user-friendly prediction** of medical insurance costs.
 Users can input **age, sex, BMI, children, smoker status, and region** → and instantly get the predicted charges.
 
-📸 *[Add snapshot of Flask app UI here]*
+<img width="1472" height="837" alt="app_UI" src="https://github.com/user-attachments/assets/2e345c51-81ea-4b11-ad24-0d5a1776c986" />
 
 ---
 
 ## ☸️ Kubeflow Pipeline Status
 
-📸 *[Add snapshot of Kubeflow DAG running successfully]*
+<img width="1918" height="912" alt="kubeflow_pipeline_UI" src="https://github.com/user-attachments/assets/693cfbe2-a0d2-4b7e-871f-0352a4260394" />
 
 ---
 
@@ -186,10 +186,4 @@ python app.py
 
 ---
 
-🔥 This version is **recruiter-ready**:
-
-* Starts with your **10-step workflow**.
-* Adds **results + snapshots placeholders**.
-* Clean **run instructions**.
-* **Roadmap** shows what’s done vs planned.
 
