@@ -31,7 +31,7 @@ I have implemented complete **MLOps practices** for this project:
 
 ## Deployed app (AWS EC2 instance)
 
-👉 App will be available at: **[http://ec2-18-209-70-52.compute-1.amazonaws.com:5000/](http://ec2-18-209-70-52.compute-1.amazonaws.com:5000/)**
+👉 App will be available at: **[http://ec2-54-234-204-18.compute-1.amazonaws.com:5000/](http://ec2-54-234-204-18.compute-1.amazonaws.com:5000/)**
 
 ---
                   ┌────────────────┐
