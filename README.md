@@ -27,7 +27,11 @@ I have implemented complete **MLOps practices** for this project:
 7. **Flask Application** → built an interactive UI for easy predictions.
 8. **Containerization with Docker** → made project machine-independent and portable.
 9. **Kubeflow Pipelines** → used Minikube for local K8s experiments, created pipeline with data processing & model training components.
-10. **Deployment (CI/CD)** → automated process for reproducible, scalable deployment.
+10. **AWS Deployment** → used AWS EC2 instance for flask app deployment
+
+## Deployed app (AWS EC2 instance)
+
+👉 App will be available at: **[http://ec2-18-209-70-52.compute-1.amazonaws.com:5000/](http://ec2-18-209-70-52.compute-1.amazonaws.com:5000/)**
 
 ---
                   ┌────────────────┐
